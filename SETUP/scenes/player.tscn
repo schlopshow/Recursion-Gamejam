@@ -1,8 +1,8 @@
 [gd_scene load_steps=22 format=3 uid="uid://cfe76uk26tld4"]
 
-[ext_resource type="Script" uid="uid://d057fj6xfu22f" path="res://setup/player.gd" id="1_lnera"]
-[ext_resource type="Texture2D" uid="uid://dqqbw8fu3e3qi" path="res://canvas/assets/tmp/FreeKnight_v1/Colour1/NoOutline/120x80_PNGSheets/_Attack2.png" id="2_8idnc"]
-[ext_resource type="Texture2D" uid="uid://ccm5rtsq2ysky" path="res://canvas/assets/tmp/FreeKnight_v1/Colour1/NoOutline/120x80_PNGSheets/_Idle.png" id="3_7m7sm"]
+[ext_resource type="Script" uid="uid://d057fj6xfu22f" path="res://SETUP/player.gd" id="1_lnera"]
+[ext_resource type="Texture2D" uid="uid://dqqbw8fu3e3qi" path="res://CANVAS/assets/tmp/FreeKnight_v1/Colour1/NoOutline/120x80_PNGSheets/_Attack2.png" id="2_8idnc"]
+[ext_resource type="Texture2D" uid="uid://ccm5rtsq2ysky" path="res://CANVAS/assets/tmp/FreeKnight_v1/Colour1/NoOutline/120x80_PNGSheets/_Idle.png" id="3_7m7sm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kdubu"]
 size = Vector2(20, 37)
