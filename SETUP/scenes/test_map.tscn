@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=4 uid="uid://d2lahalrbufq3"]
+[gd_scene load_steps=6 format=4 uid="uid://d2lahalrbufq3"]
 
 [ext_resource type="Texture2D" uid="uid://bhs5nwk4rn4mb" path="res://CANVAS/assets/tmp/Tech Dungeon Roguelite - Asset Pack (DEMO)/tileset x1.png" id="1_kamcp"]
 [ext_resource type="PackedScene" uid="uid://cfe76uk26tld4" path="res://SETUP/scenes/player.tscn" id="2_3oafj"]
+[ext_resource type="PackedScene" uid="uid://bb0ujy4na0ls8" path="res://SETUP/scenes/basic_enemy.tscn" id="3_3oafj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0dx2f"]
 texture = ExtResource("1_kamcp")
@@ -98,3 +99,6 @@ tile_set = SubResource("TileSet_5417e")
 offset = Vector2(0, -30)
 zoom = Vector2(2, 2)
 position_smoothing_enabled = true
+
+[node name="basic_enemy" parent="." instance=ExtResource("3_3oafj")]
+position = Vector2(204, 74)

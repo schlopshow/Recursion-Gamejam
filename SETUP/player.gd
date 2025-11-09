@@ -4,7 +4,8 @@ extends CharacterBody2D
 @export var jump_time_to_peak = 0.5
 @export var jump_time_to_descent = 0.4
 
-@export var speed = 150.0
+@export var walking_speed := 150.0
+@export var crouching_speed := 50.0
 @export var friction = 1500.0
 
 @export var throw_force = 300.0
@@ -13,7 +14,12 @@ extends CharacterBody2D
 @export var dash_speed_y := 300.0
 @export var dash_duration := 0.2  # seconds
 
+@export var attack_delay = 0.5
+
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
+@onready var sword_right: Area2D = $SwordHitboxRight
+@onready var sword_left: Area2D = $SwordHitboxLeft
+@onready var sword: Area2D = sword_right
 
 var facing_direction = Vector2.RIGHT
 
@@ -23,7 +29,9 @@ var used_dash := false
 var dash_direction := Vector2.ZERO
 
 var should_turn = false
+
 var transitioning = false
+var attacking = false
 var crouching = false
 
 func do_movement(delta):
@@ -37,7 +45,11 @@ func do_movement(delta):
 		move_dir.y += 1
 	if Input.is_action_pressed("up"):
 		move_dir.y -= 1
-	
+		
+	var speed = walking_speed
+	if crouching:
+		speed = crouching_speed
+
 	if move_dir.x == 0 and abs(velocity.x) > friction * delta:
 		velocity.x -= velocity.x * (friction * delta) / speed
 	else:
@@ -76,9 +88,21 @@ func start_dash():
 	velocity.x = dash_direction.x * dash_speed_x
 	#velocity.y = dash_direction.y * dash_speed_y
 	velocity.y = 0
+	
+func start_attack():
+	anim.flip_h = facing_direction.x < 0
+	anim.play("attack")
+	attacking = true
+	should_turn = false
+	sword.monitorable = true
+	
 
 func _physics_process(delta):
 	if transitioning:
+		return
+	
+	if Input.is_action_just_pressed("attack"):
+		start_attack()
 		return
 	
 	if is_dashing:
@@ -106,16 +130,27 @@ func _physics_process(delta):
 	if is_on_floor():
 		used_dash = false
 		
-	_update_animation()
+	
+	if !attacking:
+		_update_animation()	
 
 	
 func _update_animation():
 	
-	if facing_direction.y > 0:
-		anim.play("crouch")
-		return
+	crouching = false
 	
 	if is_on_floor():
+		if facing_direction.y > 0:
+			crouching = true
+			should_turn = false
+			if velocity == Vector2.ZERO:
+				anim.play("crouch")
+				return
+			_turn(facing_direction.x < 0)
+			anim.play("crouch_walk")
+			return
+	
+		
 		if velocity == Vector2.ZERO:
 			anim.play("idle")
 			should_turn = false
@@ -125,12 +160,10 @@ func _update_animation():
 			if should_turn:
 				_play_turn_animation()
 				return
-			anim.flip_h = new_flip
+			_turn(new_flip)
 		anim.play("run")
 		should_turn = true
 		return
-
-	
 		
 	if velocity.y < 0:
 		anim.play("jump")
@@ -142,18 +175,27 @@ func _update_animation():
 		should_turn = false
 		return
 		
-		
 func _play_turn_animation():
 	transitioning = true
 	anim.play("turn_around")
 	
-	print_debug("playing")
-	
+
+func _turn(face_left):
+	anim.flip_h = face_left
+	sword = sword_left if face_left else sword_right
+
 
 func _on_animated_sprite_2d_animation_finished():
-	print_debug("finish called")
 	if anim.animation == "turn_around":
-		anim.flip_h = !anim.flip_h
+		_turn(!anim.flip_h)
 		anim.play("run")
-		transitioning = false # Replace with function body.
-		print_debug("ended")
+	
+	attacking = false
+	transitioning = false # Replace with function body.
+
+
+func _on_animated_sprite_2d_frame_changed():
+	if anim.animation == "attack" && anim.frame == 2:
+		for body in sword.get_overlapping_bodies():
+			if body.is_in_group("enemies"):
+				body.take_damage(facing_direction.x)
