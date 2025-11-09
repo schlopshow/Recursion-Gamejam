@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Recursion-Game"
+run/main_scene="uid://d2lahalrbufq3"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://CANVAS/icon.svg"
 
